@@ -193,19 +193,20 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                                 )}
 
                                 {/* Parents */}
+                                {selectedPerson.parentIds.map(parentId => {
                                     const p = people.find(x => x.id === parentId);
-                                if (!p) return null;
-                                return (
-                                <div key={parentId} className="flex items-center gap-3" onClick={() => onSelectPerson(parentId)}>
-                                    <div className="w-10 h-10 bg-gray-100 rounded-full overflow-hidden">
-                                        {p.photo ? <img src={p.photo} className="w-full h-full object-cover" /> : <User className="p-2 w-full h-full text-gray-400" />}
-                                    </div>
-                                    <div>
-                                        <div className="text-sm font-medium">{p.firstName} {p.lastName}</div>
-                                        <div className="text-xs text-gray-500">Orang Tua</div>
-                                    </div>
-                                </div>
-                                )
+                                    if (!p) return null;
+                                    return (
+                                        <div key={parentId} className="flex items-center gap-3" onClick={() => onSelectPerson(parentId)}>
+                                            <div className="w-10 h-10 bg-gray-100 rounded-full overflow-hidden">
+                                                {p.photo ? <img src={p.photo} className="w-full h-full object-cover" /> : <User className="p-2 w-full h-full text-gray-400" />}
+                                            </div>
+                                            <div>
+                                                <div className="text-sm font-medium">{p.firstName} {p.lastName}</div>
+                                                <div className="text-xs text-gray-500">Orang Tua</div>
+                                            </div>
+                                        </div>
+                                    )
                                 })}
 
                                 {/* Add Parent Button */}
