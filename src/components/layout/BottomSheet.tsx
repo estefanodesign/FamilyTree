@@ -159,113 +159,136 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                             </div>
 
                             {/* Family List */}
-                            <div className="space-y-4">
+                            <div className="space-y-6">
                                 <h3 className="font-semibold text-gray-900 border-b border-gray-100 pb-2">Keluarga</h3>
 
                                 {/* Spouse */}
-                                {selectedPerson.spouseId ? (() => {
-                                    const spouse = people.find(x => x.id === selectedPerson.spouseId);
-                                    if (!spouse) return null;
-                                    return (
-                                        <div key={spouse.id} className="flex items-center gap-3" onClick={() => onSelectPerson(spouse.id)}>
-                                            <div className="w-10 h-10 bg-gray-100 rounded-full overflow-hidden">
-                                                {spouse.photo ? <img src={spouse.photo} className="w-full h-full object-cover" /> : <User className="p-2 w-full h-full text-gray-400" />}
-                                            </div>
-                                            <div>
-                                                <div className="text-sm font-medium">{spouse.firstName} {spouse.lastName}</div>
-                                                <div className="text-xs text-gray-500">Pasangan</div>
-                                            </div>
-                                        </div>
-                                    );
-                                })() : (
-                                    <button
-                                        onClick={() => onAddRelation('spouse')}
-                                        className="flex items-center gap-3 w-full text-left"
-                                    >
-                                        <div className="w-10 h-10 bg-rose-50 rounded-full flex items-center justify-center text-rose-400">
-                                            <Plus className="w-5 h-5" />
-                                        </div>
-                                        <div>
-                                            <div className="text-sm font-medium text-rose-500">Tambah Pasangan</div>
-                                            <div className="text-xs text-gray-400">Tambahkan suami atau istri</div>
-                                        </div>
-                                    </button>
-                                )}
-
-                                {/* Parents */}
-                                {selectedPerson.parentIds.map(parentId => {
-                                    const p = people.find(x => x.id === parentId);
-                                    if (!p) return null;
-                                    return (
-                                        <div key={parentId} className="flex items-center gap-3" onClick={() => onSelectPerson(parentId)}>
-                                            <div className="w-10 h-10 bg-gray-100 rounded-full overflow-hidden">
-                                                {p.photo ? <img src={p.photo} className="w-full h-full object-cover" /> : <User className="p-2 w-full h-full text-gray-400" />}
-                                            </div>
-                                            <div>
-                                                <div className="text-sm font-medium">{p.firstName} {p.lastName}</div>
-                                                <div className="text-xs text-gray-500">Orang Tua</div>
-                                            </div>
-                                        </div>
-                                    )
-                                })}
-
-                                {/* Add Parent Button */}
-                                {selectedPerson.parentIds.length < 2 && (
-                                    <button
-                                        onClick={() => onAddRelation('parent')}
-                                        className="flex items-center gap-3 w-full text-left"
-                                    >
-                                        <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-400">
-                                            <Plus className="w-5 h-5" />
-                                        </div>
-                                        <div>
-                                            <div className="text-sm font-medium text-blue-500">Tambah Orang Tua</div>
-                                            <div className="text-xs text-gray-400">Tambahkan ayah atau ibu</div>
-                                        </div>
-                                    </button>
-                                )}
-
-                                {/* Siblings */}
-                                {(() => {
-                                    const siblingIds = people
-                                        .filter(p => p.id !== selectedPerson.id && p.parentIds.some(pid => selectedPerson.parentIds.includes(pid)))
-                                        .map(p => p.id);
-
-                                    if (siblingIds.length === 0) return null;
-
-                                    return siblingIds.map(sid => {
-                                        const s = people.find(x => x.id === sid);
-                                        if (!s) return null;
+                                <div>
+                                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Pasangan</h4>
+                                    {selectedPerson.spouseId ? (() => {
+                                        const spouse = people.find(x => x.id === selectedPerson.spouseId);
+                                        if (!spouse) return null;
                                         return (
-                                            <div key={sid} className="flex items-center gap-3" onClick={() => onSelectPerson(sid)}>
+                                            <div key={spouse.id} className="flex items-center gap-3" onClick={() => onSelectPerson(spouse.id)}>
                                                 <div className="w-10 h-10 bg-gray-100 rounded-full overflow-hidden">
-                                                    {s.photo ? <img src={s.photo} className="w-full h-full object-cover" /> : <User className="p-2 w-full h-full text-gray-400" />}
+                                                    {spouse.photo ? <img src={spouse.photo} className="w-full h-full object-cover" /> : <User className="p-2 w-full h-full text-gray-400" />}
                                                 </div>
                                                 <div>
-                                                    <div className="text-sm font-medium">{s.firstName} {s.lastName}</div>
-                                                    <div className="text-xs text-gray-500">Saudara</div>
+                                                    <div className="text-sm font-medium">{spouse.firstName} {spouse.lastName}</div>
+                                                    <div className="text-xs text-gray-500">Pasangan</div>
                                                 </div>
                                             </div>
-                                        )
-                                    });
-                                })()}
-
-                                {/* Children */}
-                                {selectedPerson.childrenIds.map(childId => {
-                                    const c = people.find(x => x.id === childId);
-                                    if (!c) return null;
-                                    return (
-                                        <div key={childId} className="flex items-center gap-3" onClick={() => onSelectPerson(childId)}>
-                                            <div className="w-10 h-10 bg-gray-100 rounded-full overflow-hidden">
-                                                {c.photo ? <img src={c.photo} className="w-full h-full object-cover" /> : <User className="p-2 w-full h-full text-gray-400" />}
+                                        );
+                                    })() : (
+                                        <button
+                                            onClick={() => onAddRelation('spouse')}
+                                            className="flex items-center gap-3 w-full text-left"
+                                        >
+                                            <div className="w-10 h-10 bg-rose-50 rounded-full flex items-center justify-center text-rose-400">
+                                                <Plus className="w-5 h-5" />
                                             </div>
                                             <div>
-                                                <div className="text-sm font-medium">{c.firstName} {c.lastName}</div>
-                                                <div className="text-xs text-gray-500">Anak</div>
+                                                <div className="text-sm font-medium text-rose-500">Tambah Pasangan</div>
+                                                <div className="text-xs text-gray-400">Tambahkan suami atau istri</div>
                                             </div>
-                                        </div>
-                                    )
-                                })}
+                                        </button>
+                                    )}
+                                </div>
+
+                                {/* Parents */}
+                                <div>
+                                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Orang Tua</h4>
+                                    <div className="grid gap-3">
+                                        {selectedPerson.parentIds.map(parentId => {
+                                            const p = people.find(x => x.id === parentId);
+                                            if (!p) return null;
+                                            return (
+                                                <div key={parentId} className="flex items-center gap-3" onClick={() => onSelectPerson(parentId)}>
+                                                    <div className="w-10 h-10 bg-gray-100 rounded-full overflow-hidden">
+                                                        {p.photo ? <img src={p.photo} className="w-full h-full object-cover" /> : <User className="p-2 w-full h-full text-gray-400" />}
+                                                    </div>
+                                                    <div>
+                                                        <div className="text-sm font-medium">{p.firstName} {p.lastName}</div>
+                                                        <div className="text-xs text-gray-500">Orang Tua</div>
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+
+                                        {/* Add Parent Button */}
+                                        {selectedPerson.parentIds.length < 2 && (
+                                            <button
+                                                onClick={() => onAddRelation('parent')}
+                                                className="flex items-center gap-3 w-full text-left"
+                                            >
+                                                <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-400">
+                                                    <Plus className="w-5 h-5" />
+                                                </div>
+                                                <div>
+                                                    <div className="text-sm font-medium text-blue-500">Tambah Orang Tua</div>
+                                                    <div className="text-xs text-gray-400">Tambahkan ayah atau ibu</div>
+                                                </div>
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Siblings */}
+                                <div>
+                                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Saudara</h4>
+                                    <div className="grid gap-3">
+                                        {(() => {
+                                            const siblingIds = people
+                                                .filter(p => p.id !== selectedPerson.id && p.parentIds.some(pid => selectedPerson.parentIds.includes(pid)))
+                                                .map(p => p.id);
+
+                                            if (siblingIds.length === 0) {
+                                                return <div className="text-xs text-gray-400 italic">Tidak ada data saudara</div>;
+                                            }
+
+                                            return siblingIds.map(sid => {
+                                                const s = people.find(x => x.id === sid);
+                                                if (!s) return null;
+                                                return (
+                                                    <div key={sid} className="flex items-center gap-3" onClick={() => onSelectPerson(sid)}>
+                                                        <div className="w-10 h-10 bg-gray-100 rounded-full overflow-hidden">
+                                                            {s.photo ? <img src={s.photo} className="w-full h-full object-cover" /> : <User className="p-2 w-full h-full text-gray-400" />}
+                                                        </div>
+                                                        <div>
+                                                            <div className="text-sm font-medium">{s.firstName} {s.lastName}</div>
+                                                            <div className="text-xs text-gray-500">Saudara</div>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            });
+                                        })()}
+                                    </div>
+                                </div>
+
+                                {/* Children */}
+                                <div>
+                                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Anak ({selectedPerson.childrenIds.length})</h4>
+                                    <div className="grid gap-3">
+                                        {selectedPerson.childrenIds.length === 0 && (
+                                            <div className="text-xs text-gray-400 italic">Belum ada data anak</div>
+                                        )}
+                                        {selectedPerson.childrenIds.map(childId => {
+                                            const c = people.find(x => x.id === childId);
+                                            if (!c) return null;
+                                            return (
+                                                <div key={childId} className="flex items-center gap-3" onClick={() => onSelectPerson(childId)}>
+                                                    <div className="w-10 h-10 bg-gray-100 rounded-full overflow-hidden">
+                                                        {c.photo ? <img src={c.photo} className="w-full h-full object-cover" /> : <User className="p-2 w-full h-full text-gray-400" />}
+                                                    </div>
+                                                    <div>
+                                                        <div className="text-sm font-medium">{c.firstName} {c.lastName}</div>
+                                                        <div className="text-xs text-gray-500">Anak</div>
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </motion.div>
