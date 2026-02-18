@@ -23,6 +23,7 @@ import { GuideButton } from '@/components/ui/GuideButton';
 import { GuideModal } from '@/components/guide/GuideModal';
 import { LogButton } from '@/components/ui/LogButton';
 import { LogModal } from '@/components/ui/LogModal';
+import { WelcomeModal } from '@/components/ui/WelcomeModal';
 
 export default function App() {
   const [people, setPeople] = useState<Person[]>([]);
@@ -603,6 +604,9 @@ export default function App() {
       {/* Activity Log Button & Modal */}
       <LogButton onClick={() => setIsLogOpen(true)} />
       <LogModal isOpen={isLogOpen} onClose={() => setIsLogOpen(false)} />
+
+      {/* Welcome Modal */}
+      <WelcomeModal />
 
       <Modal
         isOpen={showPersonModal}
