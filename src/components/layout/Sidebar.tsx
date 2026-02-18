@@ -11,7 +11,7 @@ interface SidebarProps {
     onClose: () => void;
     onEdit: (person: Person) => void;
     onDelete: (id: string) => void;
-    onAddRelation: (type: 'child' | 'spouse' | 'sibling') => void;
+    onAddRelation: (type: 'child' | 'spouse' | 'sibling' | 'parent') => void;
     onSelectPerson: (id: string) => void;
     people: Person[];
 }
@@ -189,41 +189,54 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
                             <div className="space-y-4">
                                 {/* Parents */}
-                                {selectedPerson.parentIds.length > 0 && (
-                                    <div>
-                                        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Orang Tua</h4>
-                                        <div className="grid gap-2">
-                                            {selectedPerson.parentIds.map(parentId => {
-                                                const parent = people.find(p => p.id === parentId);
-                                                if (!parent) return null;
-                                                return (
-                                                    <button
-                                                        key={parentId}
-                                                        onClick={() => onSelectPerson(parentId)}
-                                                        className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100 hover:shadow-sm group text-left w-full"
-                                                    >
-                                                        <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-100 group-hover:ring-blue-100 transition-all">
-                                                            {parent.photo ? (
-                                                                <img src={parent.photo} alt="" className="w-full h-full object-cover" />
-                                                            ) : (
-                                                                <div className={`w-full h-full flex items-center justify-center ${parent.gender === 'male' ? 'bg-blue-100 text-blue-600' :
-                                                                    parent.gender === 'female' ? 'bg-rose-100 text-rose-600' :
-                                                                        'bg-violet-100 text-violet-600'
-                                                                    }`}>
-                                                                    <User className="w-5 h-5" />
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                        <div className="flex-1 min-w-0">
-                                                            <div className="text-sm font-medium text-gray-900 truncate">{parent.firstName} {parent.lastName}</div>
-                                                            <div className="text-xs text-gray-500 truncate">{parent.occupation || 'Orang Tua'}</div>
-                                                        </div>
-                                                    </button>
-                                                );
-                                            })}
-                                        </div>
+                                <div>
+                                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Orang Tua</h4>
+                                    <div className="grid gap-2">
+                                        {selectedPerson.parentIds.map(parentId => {
+                                            const parent = people.find(p => p.id === parentId);
+                                            if (!parent) return null;
+                                            return (
+                                                <button
+                                                    key={parentId}
+                                                    onClick={() => onSelectPerson(parentId)}
+                                                    className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100 hover:shadow-sm group text-left w-full"
+                                                >
+                                                    <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-100 group-hover:ring-blue-100 transition-all">
+                                                        {parent.photo ? (
+                                                            <img src={parent.photo} alt="" className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            <div className={`w-full h-full flex items-center justify-center ${parent.gender === 'male' ? 'bg-blue-100 text-blue-600' :
+                                                                parent.gender === 'female' ? 'bg-rose-100 text-rose-600' :
+                                                                    'bg-violet-100 text-violet-600'
+                                                                }`}>
+                                                                <User className="w-5 h-5" />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="text-sm font-medium text-gray-900 truncate">{parent.firstName} {parent.lastName}</div>
+                                                        <div className="text-xs text-gray-500 truncate">{parent.occupation || 'Orang Tua'}</div>
+                                                    </div>
+                                                </button>
+                                            );
+                                        })}
+
+                                        {/* Add Parent Button if less than 2 parents */}
+                                        {selectedPerson.parentIds.length < 2 && (
+                                            <button
+                                                onClick={() => onAddRelation('parent')}
+                                                className="flex items-center gap-3 p-2 rounded-xl border-2 border-dashed border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all text-left w-full group"
+                                            >
+                                                <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:text-blue-500 group-hover:bg-blue-100 transition-all">
+                                                    <Plus className="w-5 h-5" />
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="text-sm font-medium text-gray-500 group-hover:text-blue-600">Tambah Orang Tua</div>
+                                                </div>
+                                            </button>
+                                        )}
                                     </div>
-                                )}
+                                </div>
 
                                 {/* Spouse */}
                                 {selectedPerson.spouseId && (
@@ -277,6 +290,55 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                         </button>
                                     </div>
                                 )}
+
+                                {/* Siblings */}
+                                <div>
+                                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                                        Saudara
+                                    </h4>
+                                    <div className="grid gap-2">
+                                        {(() => {
+                                            const siblingIds = people
+                                                .filter(p => p.id !== selectedPerson.id && p.parentIds.some(pid => selectedPerson.parentIds.includes(pid)))
+                                                .map(p => p.id);
+
+                                            if (siblingIds.length === 0) {
+                                                return <div className="text-xs text-gray-400 italic pl-1">Tidak ada data saudara</div>
+                                            }
+
+                                            return siblingIds.map(sid => {
+                                                const sibling = people.find(p => p.id === sid);
+                                                if (!sibling) return null;
+                                                return (
+                                                    <button
+                                                        key={sid}
+                                                        onClick={() => onSelectPerson(sid)}
+                                                        className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100 hover:shadow-sm group text-left w-full"
+                                                    >
+                                                        <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-gray-100 group-hover:ring-blue-100 transition-all">
+                                                            {sibling.photo ? (
+                                                                <img src={sibling.photo} alt="" className="w-full h-full object-cover" />
+                                                            ) : (
+                                                                <div className={`w-full h-full flex items-center justify-center ${sibling.gender === 'male' ? 'bg-blue-100 text-blue-600' :
+                                                                    sibling.gender === 'female' ? 'bg-rose-100 text-rose-600' :
+                                                                        'bg-violet-100 text-violet-600'
+                                                                    }`}>
+                                                                    <User className="w-5 h-5" />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="text-sm font-medium text-gray-900 truncate">{sibling.firstName} {sibling.lastName}</div>
+                                                            <div className="text-xs text-gray-500 truncate">
+                                                                {calculateAge(sibling.birthDate)} tahun
+                                                            </div>
+                                                        </div>
+                                                    </button>
+                                                );
+                                            });
+                                        })()}
+                                    </div>
+                                </div>
 
                                 {/* Children */}
                                 {selectedPerson.childrenIds.length > 0 && (

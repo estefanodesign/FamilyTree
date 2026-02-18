@@ -11,7 +11,7 @@ interface BottomSheetProps {
     onClose: () => void;
     onEdit: (person: Person) => void;
     onDelete: (id: string) => void;
-    onAddRelation: (type: 'child' | 'spouse' | 'sibling') => void;
+    onAddRelation: (type: 'child' | 'spouse' | 'sibling' | 'parent') => void;
     onSelectPerson: (id: string) => void;
     people: Person[];
 }
@@ -193,21 +193,61 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                                 )}
 
                                 {/* Parents */}
-                                {selectedPerson.parentIds.map(parentId => {
                                     const p = people.find(x => x.id === parentId);
-                                    if (!p) return null;
-                                    return (
-                                        <div key={parentId} className="flex items-center gap-3" onClick={() => onSelectPerson(parentId)}>
-                                            <div className="w-10 h-10 bg-gray-100 rounded-full overflow-hidden">
-                                                {p.photo ? <img src={p.photo} className="w-full h-full object-cover" /> : <User className="p-2 w-full h-full text-gray-400" />}
-                                            </div>
-                                            <div>
-                                                <div className="text-sm font-medium">{p.firstName} {p.lastName}</div>
-                                                <div className="text-xs text-gray-500">Orang Tua</div>
-                                            </div>
-                                        </div>
-                                    )
+                                if (!p) return null;
+                                return (
+                                <div key={parentId} className="flex items-center gap-3" onClick={() => onSelectPerson(parentId)}>
+                                    <div className="w-10 h-10 bg-gray-100 rounded-full overflow-hidden">
+                                        {p.photo ? <img src={p.photo} className="w-full h-full object-cover" /> : <User className="p-2 w-full h-full text-gray-400" />}
+                                    </div>
+                                    <div>
+                                        <div className="text-sm font-medium">{p.firstName} {p.lastName}</div>
+                                        <div className="text-xs text-gray-500">Orang Tua</div>
+                                    </div>
+                                </div>
+                                )
                                 })}
+
+                                {/* Add Parent Button */}
+                                {selectedPerson.parentIds.length < 2 && (
+                                    <button
+                                        onClick={() => onAddRelation('parent')}
+                                        className="flex items-center gap-3 w-full text-left"
+                                    >
+                                        <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-400">
+                                            <Plus className="w-5 h-5" />
+                                        </div>
+                                        <div>
+                                            <div className="text-sm font-medium text-blue-500">Tambah Orang Tua</div>
+                                            <div className="text-xs text-gray-400">Tambahkan ayah atau ibu</div>
+                                        </div>
+                                    </button>
+                                )}
+
+                                {/* Siblings */}
+                                {(() => {
+                                    const siblingIds = people
+                                        .filter(p => p.id !== selectedPerson.id && p.parentIds.some(pid => selectedPerson.parentIds.includes(pid)))
+                                        .map(p => p.id);
+
+                                    if (siblingIds.length === 0) return null;
+
+                                    return siblingIds.map(sid => {
+                                        const s = people.find(x => x.id === sid);
+                                        if (!s) return null;
+                                        return (
+                                            <div key={sid} className="flex items-center gap-3" onClick={() => onSelectPerson(sid)}>
+                                                <div className="w-10 h-10 bg-gray-100 rounded-full overflow-hidden">
+                                                    {s.photo ? <img src={s.photo} className="w-full h-full object-cover" /> : <User className="p-2 w-full h-full text-gray-400" />}
+                                                </div>
+                                                <div>
+                                                    <div className="text-sm font-medium">{s.firstName} {s.lastName}</div>
+                                                    <div className="text-xs text-gray-500">Saudara</div>
+                                                </div>
+                                            </div>
+                                        )
+                                    });
+                                })()}
 
                                 {/* Children */}
                                 {selectedPerson.childrenIds.map(childId => {

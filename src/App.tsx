@@ -255,7 +255,7 @@ export default function App() {
     setScale(s => Math.max(0.3, Math.min(3, s * delta)));
   };
 
-  const handleAddPerson = (type: 'child' | 'spouse' | 'sibling', parentId?: string) => {
+  const handleAddPerson = (type: 'child' | 'spouse' | 'sibling' | 'parent', parentId?: string) => {
     const newPerson: Person = {
       id: Date.now().toString(),
       firstName: 'New',
@@ -286,6 +286,11 @@ export default function App() {
       setAddingSpouseForId(selectedPersonId);
     } else if (type === 'sibling' && parentId) {
       newPerson.parentIds = [parentId];
+    } else if (type === 'parent' && selectedPersonId) {
+      newPerson.childrenIds = [selectedPersonId];
+      // Try to match surname
+      const currentPerson = people.find(p => p.id === selectedPersonId);
+      newPerson.lastName = currentPerson?.lastName || '';
     }
 
     setEditingPerson(newPerson);
@@ -313,6 +318,21 @@ export default function App() {
                 ...updated[parentIndex],
                 childrenIds: [...updated[parentIndex].childrenIds, person.id]
               };
+            }
+          });
+
+          // Update children references (if adding a parent)
+          person.childrenIds.forEach(childId => {
+            const childIndex = updated.findIndex(p => p.id === childId);
+            if (childIndex !== -1 && !updated[childIndex].parentIds.includes(person.id)) {
+              updated[childIndex] = {
+                ...updated[childIndex],
+                parentIds: [...updated[childIndex].parentIds, person.id]
+              };
+              // Sync to DB
+              if (isSupabaseConfigured) {
+                api.updatePerson(updated[childIndex]).catch(console.error);
+              }
             }
           });
 

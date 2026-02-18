@@ -32,6 +32,7 @@ export const WelcomeModal = () => {
                     <p>
                         Anggota keluarga masih banyak yang belum terdata.
                         Silahkan menambahkan anggota keluarga untuk melengkapinya.
+                        Masukan dan ide pengembangan dapat dishare di group KCK (Keluarga Cimbu Kanan)
                     </p>
                     <p className="font-medium mt-2">
                         Terima kasih.
